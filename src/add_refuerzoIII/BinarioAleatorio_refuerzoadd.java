@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class BinarioAleatorio_refuerzoadd {
     
     static Scanner teclado = new Scanner(System.in);
-    static double min=50,max=0;
+    static double min=70,max=-70;
     static int hmin=0, hmax=0;  
    
     public static void main(String[]args) throws IOException{
@@ -36,8 +36,10 @@ public class BinarioAleatorio_refuerzoadd {
             for(int i=0;i<horas.length;i++){
                 
                 dataOS.writeInt(horas[i]);
+                //presion
                 dataOS.writeDouble((int) (Math.random() * (100-10) + 10));
-                dataOS.writeDouble((int) (Math.random() * (40-0) + 0));
+                //temperatura
+                dataOS.writeDouble((int) (Math.random() * (55-(-50)) + (-50)));
                 
                 datapos=datapos+20;
                 dataOS.seek(datapos);
