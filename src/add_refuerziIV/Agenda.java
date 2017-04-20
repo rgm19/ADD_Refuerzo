@@ -39,9 +39,11 @@ public class Agenda {
         
         System.out.println("1º- Añadir contacto nuevo");
         System.out.println("2º- Mostrar todos los contactos de la agenda");
-        System.out.println("3º- Buscar un contacto por nombre");
-        System.out.println("4º- Añadir un contacto nuevo");
+        System.out.println("3º- Añadir un contacto nuevo");
+        System.out.println("4º- Buscar un contacto por nombre");
         System.out.println("5º- Buscar un contacto por telefono");
+        System.out.println("6º- Borrar un contacto por nombre");
+        System.out.println("7º- Modificar un contacto por nombre");
         System.out.println("0º- Salir");
         
         int op = elecInt();
@@ -55,16 +57,24 @@ public class Agenda {
                 listarContactos();
             break;
             
-            case 3:
-                buscarContacto();
+            case 3:     
+                anadirContacto();
             break;
             
             case 4:
-                anadirContacto();
+                buscarContacto();
             break;
             
             case 5:
                 buscarTelf();
+            break;
+            
+            case 6:
+                borrarContacto();
+            break;
+            
+            case 7:
+                modificarTelf();
             break;
             
             case 0:
@@ -221,6 +231,71 @@ public class Agenda {
         }
         dataIN.close();
         fileIN.close();
+    }
+//-----------------Borrar Contacto----------------------------------------------    
+    private static void borrarContacto() throws FileNotFoundException, IOException {
+        FileInputStream fileIN = new FileInputStream(fichero);
+        ObjectInputStream dataIN = new ObjectInputStream(fileIN);
+        Persona p = new Persona();
+        
+        FileOutputStream fileout = new FileOutputStream(fichero);
+        ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+        
+        System.out.println("Nombre de la persona a borrar");
+        String aux = teclado.nextLine();
+        
+        try{
+            while(true){
+                p = (Persona) dataIN.readObject();
+                
+                if(aux.equalsIgnoreCase(p.getNombre())){
+                       //***************************************
+                      //revisar por falta de metodo para borrar
+                      //************************************
+                       
+                       
+                }
+            }
+            
+        }catch(Exception ex){
+            System.err.println("ERROR -> "+ex.getMessage());
+        }
+        dataIN.close();
+        fileIN.close();
+        
+        dataOS.close();
+        fileout.close();
+    }
+    //---------------------Modificar telf---------------------------------------
+
+    private static void modificarTelf() throws FileNotFoundException, IOException {
+        FileInputStream fileIN = new FileInputStream(fichero);
+        ObjectInputStream dataIN = new ObjectInputStream(fileIN);
+        Persona p = new Persona();
+        FileOutputStream fileout = new FileOutputStream(fichero);
+        ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+        
+        System.out.println("Nombre de la persona a modificar telefono");
+        String aux = teclado.nextLine();
+        
+        try{
+            while(true){
+                p = (Persona) dataIN.readObject();
+                System.out.print("pruebaaaa!!!!");
+                if(aux.equalsIgnoreCase(p.getNombre())){
+                     System.out.print("Nuevo telf: ");
+                     int nuevo = teclado.nextInt();
+                     dataOS.writeInt(nuevo);
+                }
+            }
+            
+        }catch(Exception ex){
+            System.err.println("ERROR -> "+ex.getMessage());
+        }
+        dataIN.close();
+        fileIN.close();
+        dataOS.close();
+        fileout.close();
     }
     
 }
