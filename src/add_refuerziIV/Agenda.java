@@ -22,23 +22,16 @@ public class Agenda {
     static Persona persona; 
     static boolean bandera=true;
     static File fichero = new File("agenda.dat");
+    static Scanner teclado = new Scanner(System.in);
 
     
     public static void main(String[]args) throws IOException, FileNotFoundException, ClassNotFoundException{
- 
-      /*
-      if(!fichero.exists()){
-          fichero.createNewFile();
-      }
-      */
        
         
-            while(!bandera){
+            do{
               menu();
-            }
+            }while(bandera);
             
-       //dataOS.close();
-       //fileout.close();
        System.exit(0);
     }   
 
@@ -46,6 +39,9 @@ public class Agenda {
         
         System.out.println("1º- Añadir contacto nuevo");
         System.out.println("2º- Mostrar todos los contactos de la agenda");
+        System.out.println("3º- Buscar un contacto por nombre");
+        System.out.println("4º- Añadir un contacto nuevo");
+        System.out.println("5º- Buscar un contacto por telefono");
         System.out.println("0º- Salir");
         
         int op = elecInt();
@@ -59,6 +55,18 @@ public class Agenda {
                 listarContactos();
             break;
             
+            case 3:
+                buscarContacto();
+            break;
+            
+            case 4:
+                anadirContacto();
+            break;
+            
+            case 5:
+                buscarTelf();
+            break;
+            
             case 0:
                 bandera=false;
             break;
@@ -68,7 +76,7 @@ public class Agenda {
         }    
         
     }
-    //-----------------AÑADIR CONTACTO-------------------------------------------
+    //-----------------AÑADIR  lista CONTACTO-------------------------------------------
     private static void addContacto() throws FileNotFoundException, IOException {
         FileOutputStream fileout = new FileOutputStream(fichero);
         ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
@@ -104,17 +112,115 @@ public class Agenda {
     }
     //-----------------LISTAR CONTACTOS-----------------------------------------
     private static void listarContactos() throws FileNotFoundException, IOException, ClassNotFoundException {
+        
         FileInputStream fileIN = new FileInputStream(fichero);
         ObjectInputStream dataIN = new ObjectInputStream(fileIN);
+        Persona p = new Persona();
         
-        while(true){
-           Persona p = new Persona();
-           p=(Persona) dataIN.readObject();
-           
-        }
-        
-        
-        //dataIN.close();
-        //fileIN.close();
+        try{
+            while(true){
+               p=(Persona) dataIN.readObject();
+
+               System.out.println("------------------------------------------");
+               System.out.println("NOMBRE: "+p.getNombre());
+               System.out.println("DIRECCION: "+p.getDireccion());
+               System.out.println("TELEFONO: "+p.getTelf());
+               System.out.println("C.P: "+p.getCodpostal());
+               
+            }
+              
+        }catch(Exception e){}
+               System.out.println("------------------------------------------");  
+        dataIN.close();
+        fileIN.close(); 
     }
+    //-------------------------BORRAR UN CONTACTO-------------------------------
+    private static void buscarContacto() throws FileNotFoundException, IOException {
+        FileInputStream fileIN = new FileInputStream(fichero);
+        ObjectInputStream dataIN = new ObjectInputStream(fileIN);
+        Persona p = new Persona();
+        
+        System.out.println("Nombre de la persona a buscar");
+        String aux = teclado.nextLine();
+        
+        try{
+            while(true){
+                p = (Persona) dataIN.readObject();
+                
+                if(aux.equalsIgnoreCase(p.getNombre())){
+                    System.out.println("------------------------------------------");
+                    System.out.println("NOMBRE: "+p.getNombre());
+                    System.out.println("DIRECCION: "+p.getDireccion());
+                    System.out.println("TELEFONO: "+p.getTelf());
+                    System.out.println("C.P: "+p.getCodpostal());
+                    System.out.println("------------------------------------------");
+                }
+            }
+            
+        }catch(Exception ex){
+            System.err.println("ERROR -> "+ex.getMessage());
+        }
+        dataIN.close();
+        fileIN.close();
+        
+    }
+    //----------------------------añadirContactoNuevo---------------------------
+    private static void anadirContacto() throws FileNotFoundException, IOException {
+        FileOutputStream fileout = new FileOutputStream(fichero);
+        ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+        
+        
+        System.out.print("Nombre: ");
+        String name = teclado.nextLine();
+        System.out.println();
+        
+        System.out.print("Direccion: ");
+        String direc = teclado.nextLine();
+        System.out.println();
+        
+        System.out.print("Telefono: ");
+        int telf = teclado.nextInt();
+        System.out.println();
+        
+        System.out.print("C.P: ");
+        int cp = teclado.nextInt();
+        System.out.println();
+        
+        Persona p = new Persona(name,direc,telf,cp);
+        dataOS.writeObject(p);
+        
+        fileout.close();
+        dataOS.close();
+    }
+    //--------------Buscar telf-------------------------------------------------
+
+    private static void buscarTelf() throws FileNotFoundException, IOException {
+        FileInputStream fileIN = new FileInputStream(fichero);
+        ObjectInputStream dataIN = new ObjectInputStream(fileIN);
+        Persona p = new Persona();
+        
+        System.out.println("Telefono de la persona a buscar");
+        int aux = teclado.nextInt();
+        
+        try{
+            while(true){
+                p = (Persona) dataIN.readObject();
+                
+                if(aux == p.getTelf()){
+                    System.out.println("------------------------------------------");
+                    System.out.println("NOMBRE: "+p.getNombre());
+                    System.out.println("DIRECCION: "+p.getDireccion());
+                    System.out.println("TELEFONO: "+p.getTelf());
+                    System.out.println("C.P: "+p.getCodpostal());
+                    System.out.println("------------------------------------------");
+                }
+            }
+            
+        }catch(Exception ex){
+            System.err.println("ERROR -> "+ex.getMessage());
+        }
+        dataIN.close();
+        fileIN.close();
+    }
+    
 }
