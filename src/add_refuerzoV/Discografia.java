@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class Discografia {
     public static void main(String[]args){
-        
+        //gkitrjgdghiojojyohip5
         try(
                 Connection conexion = DriverManager.getConnection("jdbc:mysql://localhost/Discografica","root","root");
             ){
