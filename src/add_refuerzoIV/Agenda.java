@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package add_refuerziIV;
+package add_refuerzoIV;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -144,7 +144,7 @@ public class Agenda {
         dataIN.close();
         fileIN.close(); 
     }
-    //-------------------------BORRAR UN CONTACTO-------------------------------
+    //-------------------------BUSCAR UN CONTACTO-------------------------------
     private static void buscarContacto() throws FileNotFoundException, IOException {
         FileInputStream fileIN = new FileInputStream(fichero);
         ObjectInputStream dataIN = new ObjectInputStream(fileIN);
@@ -238,7 +238,7 @@ public class Agenda {
         ObjectInputStream dataIN = new ObjectInputStream(fileIN);
         Persona p = new Persona();
         
-        FileOutputStream fileout = new FileOutputStream(fichero);
+        FileOutputStream fileout = new FileOutputStream(fichero, true);
         ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
         
         System.out.println("Nombre de la persona a borrar");
@@ -250,8 +250,8 @@ public class Agenda {
                 
                 if(aux.equalsIgnoreCase(p.getNombre())){
                        //***************************************
-                      //revisar por falta de metodo para borrar
-                      //************************************
+                      // revisar por falta de metodo para borrar
+                      //****************************************
                        
                        
                 }
@@ -274,6 +274,7 @@ public class Agenda {
         Persona p = new Persona();
         FileOutputStream fileout = new FileOutputStream(fichero);
         ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+        
         
         System.out.println("Nombre de la persona a modificar telefono");
         String aux = teclado.nextLine();

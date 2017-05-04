@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package add_refuerziIV;
+package add_refuerzoIV;
 
 import java.io.Serializable;
 
