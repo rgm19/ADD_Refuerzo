@@ -7,6 +7,8 @@ package add_refuerzoV;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
+import java.sql.CallableStatement;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,8 +25,6 @@ public class BD_Pacientes {
     public static void main(String[]args) throws ClassNotFoundException, SQLException{
         
        Class.forName("com.mysql.jdbc.Driver");
-       Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");            
-       Statement sentencia = (Statement) conexion.createStatement();
         
         while(true){
             menu();
@@ -36,6 +36,8 @@ public class BD_Pacientes {
         System.out.println("1- Insertar, modificar o borrar datos de un paciente");
         System.out.println("2- Listado de pacientes");
         System.out.println("3- Datos de paciente hospitalizado anteriormente");
+        System.out.println("4- Informacion BD");
+        System.out.println("5º Numero de pacientes que hay por cada año");
         System.out.println("0- Salir");
         System.out.println("---------------------------------------------------");
         
@@ -60,6 +62,13 @@ public class BD_Pacientes {
                 datosPacientes();
                 break;
                 
+            case 4:
+                infoBD();
+                break;
+                
+            case 5:
+                registroanios();
+                break;
                 
             case 0:
                 System.out.println("Cerrando Programa...");
@@ -251,4 +260,51 @@ public class BD_Pacientes {
        }catch(Exception e){}
     }
 //------------------------------------------------------------------------------    
-}
+
+    private static void infoBD() {
+        try(
+                Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+                Statement sentencia = (Statement) conexion.createStatement();     
+            ){
+            
+            DatabaseMetaData dbmd = conexion.getMetaData();
+            String name = dbmd.getDatabaseProductName();
+            String version = dbmd.getDatabaseProductVersion();
+            String driver = dbmd.getDriverName();
+            String nameDV = dbmd.getDriverVersion();
+            
+            System.out.println("Nombre: "+ name);
+            System.out.println("Version: "+ version);
+            System.out.println("Driver: "+ driver);
+            System.out.println("Driver Version: "+nameDV);
+            
+            System.out.println("*****************************");
+            System.out.println("Informacion de la tabla Pacientes ");
+            System.out.println(dbmd.getColumnPrivileges(null, null, "Pacientes", null));
+            
+        }catch(Exception e){}
+    } 
+//------------------------------------------------------------------------------    
+
+    private static void registroanios() throws SQLException {
+    
+        try(  
+                Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+                ){
+            
+               String sql = "{call listado_anios() }";
+               CallableStatement llamada = conexion.prepareCall(sql);
+               llamada.executeUpdate();
+               
+        }catch(Exception e){}
+        
+
+    }
+//------------------------------------------------------------------------------
+
+
+
+
+
+
+}//final de la clase
