@@ -49,6 +49,7 @@ public class BD_Pacientes {
         op=elecInt();
         
         
+        
         switch(op){
             case 1:
                 menuPacientes();
@@ -139,7 +140,8 @@ public class BD_Pacientes {
     private static void insertarPaciente() {
            
         try(            
-            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");            
+            //Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","usuario");
             Statement sentencia = (Statement) conexion.createStatement();
             ){         
             System.out.print("ID:");
@@ -216,11 +218,13 @@ public class BD_Pacientes {
 //------------------------------------------------------------------------------
     private static void listadoPacientes() throws SQLException {
         try(            
-            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");            
+            //Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","usuario");
             Statement sentencia = (Statement) conexion.createStatement();
             ){ 
             ResultSet resul =null;
-            String listado = "Select * from Pacientes where fecha_alta=current_date()";//fersfrweger
+            String listado = "Select * from Pacientes where year (fecha_alta)='2017';";
+            //String listado = "Select * from Pacientes where fecha_alta='current_date()';";
             resul=sentencia.executeQuery(listado);
             
             while(resul.next()){
@@ -289,12 +293,21 @@ public class BD_Pacientes {
     private static void registroanios() throws SQLException {
     
         try(  
-                Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+                //Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+                Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","usuario");
                 ){
             
                String sql = "{call listado_anios() }";
                CallableStatement llamada = conexion.prepareCall(sql);
-               llamada.executeUpdate();
+               ResultSet resul = llamada.executeQuery();
+               
+               while(resul.next()){
+                   
+                    System.out.println("Fecha de Alta: "+resul.getString(1));
+                    System.out.println("Pacientes Ingresados: "+resul.getInt(2));
+                    
+                    
+               }
                
         }catch(Exception e){}
         

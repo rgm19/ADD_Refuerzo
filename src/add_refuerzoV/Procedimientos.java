@@ -11,13 +11,21 @@ package add_refuerzoV;
  */
 public class Procedimientos {
     
-  /*
-        delimiter//
-        create procedure listado_anios()
-        BEGIN
-                    Select nombre, count(fecha_alta) as ingresado from Pacientes where fecha_alta= 2017-?-? group by nombre;
-                Commit;
-        end;
-        //    
-  */
+        /*
+            USE `HOSPITAL`;
+            DROP procedure IF EXISTS `listado_anios`;
+
+            DELIMITER $$
+            USE `HOSPITAL`$$
+            CREATE PROCEDURE `listado_anios` ()
+            BEGIN
+
+                    Select year(fecha_alta), count(dni) as cuantos from Pacientes 
+                group by year(fecha_alta);			
+
+
+            END$$
+
+            DELIMITER ; 
+        */
 }
