@@ -157,12 +157,21 @@ public class BD_Pacientes {
             String apellidos=teclado.nextLine();
             System.out.println();
             
-            System.out.print("Fecha:");
-            String fecha=teclado.nextLine();
+            System.out.print("Fecha_Ingreso:");
+            String fecha_ing=teclado.nextLine();
             System.out.println();
             
+            System.out.print("DNI:");
+            String dni=teclado.nextLine();
+            System.out.println();
             
-            String insert="INSERT INTO Pacientes VALUES ('"+id+"','"+nombre+"','"+apellidos+"','"+fecha+"');";     
+            String sql = "{call ingresar_pa("+fecha_ing+","+dni+")}";
+            CallableStatement llamada = conexion.prepareCall(sql);
+            
+            
+            
+            
+            String insert="INSERT INTO Pacientes VALUES ('"+id+"','"+nombre+"','"+apellidos+"','"+fecha_baja+"','"+dni+"','"+fecha_ing+"');");     
             int filas = sentencia.executeUpdate(insert);
             System.out.println("Filas Modificas = "+filas);     
         }
