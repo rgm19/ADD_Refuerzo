@@ -11,6 +11,7 @@ package add_refuerzoV;
  */
 public class Procedimientos {
     
+    //listas pacaientes por años
         /*
             USE `HOSPITAL`;
             DROP procedure IF EXISTS `listado_anios`;
@@ -27,5 +28,21 @@ public class Procedimientos {
             END$$
 
             DELIMITER ; 
+        */
+    
+    
+    //ingresar pacientes que existan o no y mostrar mensaje
+        /*
+            USE `HOSPITAL`;
+            DROP procedure IF EXISTS `ingresos`;
+
+            DELIMITER $$
+            USE `HOSPITAL`$$
+            CREATE DEFINER=`root`@`localhost` PROCEDURE `ingresos`(id smallint(4), nombre varchar(40), apellidos varchar(40), dni varchar(10) )
+            BEGIN
+                    insert into Pacientes values(id,nombre,apellidos, ADDDATE(current_date(),14), dni,current_date());
+            END$$
+
+            DELIMITER ;
         */
 }

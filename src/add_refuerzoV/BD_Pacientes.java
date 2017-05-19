@@ -140,9 +140,10 @@ public class BD_Pacientes {
     private static void insertarPaciente() {
            
         try(            
-            //Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
-            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","usuario");
+            Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","root");
+            //Connection conexion = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/HOSPITAL","root","usuario");
             Statement sentencia = (Statement) conexion.createStatement();
+            ResultSet resul = sentencia.executeQuery("select* from Pacientes");
             ){         
             System.out.print("ID:");
             int id=elecInt();
@@ -157,23 +158,36 @@ public class BD_Pacientes {
             String apellidos=teclado.nextLine();
             System.out.println();
             
-            System.out.print("Fecha_Ingreso:");
-            String fecha_ing=teclado.nextLine();
-            System.out.println();
             
             System.out.print("DNI:");
             String dni=teclado.nextLine();
             System.out.println();
             
-            String sql = "{call ingresar_pa("+fecha_ing+","+dni+")}";
+            String sql = "{call ingresos('"+id+"','"+nombre+"','"+apellidos+"','"+dni+"')}";
             CallableStatement llamada = conexion.prepareCall(sql);
+            int filas  = llamada.executeUpdate();
             
             
+            boolean bandera = false;
+            while(resul.next()){
+                
+                if(dni.equalsIgnoreCase(resul.getString(5))){
+                    bandera=true;
+                }else{
+                    bandera=false;
+                }
+            }
+            
+            if(bandera==true){
+                System.out.println("El Paciente "+nombre+" "+apellidos+" con DNI "+dni+" , tiene una nueva entrada en su registro");
+            }else{
+                System.out.println("Se ha creado el registro del Paciente "+nombre+" "+apellidos+" con DNI "+dni);
+            }
             
             
-            String insert="INSERT INTO Pacientes VALUES ('"+id+"','"+nombre+"','"+apellidos+"','"+fecha_baja+"','"+dni+"','"+fecha_ing+"');");     
-            int filas = sentencia.executeUpdate(insert);
-            System.out.println("Filas Modificas = "+filas);     
+            //String insert="INSERT INTO Pacientes VALUES ('"+id+"','"+nombre+"','"+apellidos+"','"+fecha_baja+"','"+dni+"','"+fecha_ing+"');");     
+           // int filas = sentencia.executeUpdate(insert);
+           // System.out.println("Filas Modificas = "+filas);     
         }
         catch(Exception ex)
         {
