@@ -20,6 +20,15 @@ public class Pacientes  implements java.io.Serializable {
     public Pacientes() {
     }
 
+    public Pacientes(String nombre, String apellidos, Date fechaAlta, String dni, String fechaIngreso) {
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.fechaAlta = fechaAlta;
+        this.dni = dni;
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    
 	
     public Pacientes(short id, String nombre, String apellidos, String dni, String fechaIngreso) {
         this.id = id;
