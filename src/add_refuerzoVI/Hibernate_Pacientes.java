@@ -7,14 +7,20 @@ package add_refuerzoVI;
 
 import static add_refuerzoV.BD_Pacientes.elecInt;
 import java.sql.SQLException;
+ import java.text.SimpleDateFormat;
+import java.text.ParseException;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.print.attribute.standard.MediaPrintableArea.MM;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 
 public class Hibernate_Pacientes{
@@ -22,15 +28,15 @@ public class Hibernate_Pacientes{
         
     Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
     Session session = NewHibernateUtil.getSessionFactory().openSession();
-    
+    Transaction tx = null;
     
        while(true){
-           menu(session);
+           menu(session, tx);
        }
   
 	
 	/*
-	Query q = session.createQuery("from Pacientes");//Respetar Mayusculas segun la clase del proyecto que corresponda con la tabla
+	Query q = session.createQuery("from Pacientes"); //Respetar Mayusculas segun la clase del proyecto que corresponda con la tabla
 	List<Pacientes> lista = q.list();
 	Iterator <Pacientes> it = lista.iterator();
 	while (it.hasNext())
@@ -40,7 +46,7 @@ public class Hibernate_Pacientes{
 		System.out.println("nombre - " + per.getNombre());
 		System.out.println("apellido - " + per.getApellidos());
 		System.out.println("Edad -" + per.getDni());
-                System.out.println("Ingreso: -" + per.getFechaIngreso());
+                System.out.println("Ingreso -" + per.getFechaIngreso());
                 System.out.println("Alta -" + per.getFechaAlta());
 	}
 	session.close();
@@ -48,7 +54,7 @@ public class Hibernate_Pacientes{
     }
     
 //------------------------------------------------------------------------------
-private static void menu(Session session) throws SQLException {
+private static void menu(Session session, Transaction tx) throws SQLException {
         int op=0;
         System.out.println("1- Dar de alta un paciente");
         System.out.println("2- Dar de baja un paciente");
@@ -65,7 +71,7 @@ private static void menu(Session session) throws SQLException {
         
         switch(op){
             case 1:
-               altaPaciente(session);
+               altaPaciente(session,tx);
                 break;
                 
             case 2:
@@ -95,10 +101,10 @@ private static void menu(Session session) throws SQLException {
         }
     }    
 //------------------------------------------------------------------------------
-    private static void altaPaciente(Session session) {
+    private static void altaPaciente(Session session, Transaction tx ) {
        
         
-        String sql ="from Pacientes where id=1;";
+        String sql ="from Pacientes where id=1";
         Pacientes p = (Pacientes) session.createQuery(sql).uniqueResult();
         
         String nombre = p.getNombre();
@@ -106,19 +112,25 @@ private static void menu(Session session) throws SQLException {
         String dni = p.getDni();
         String fecha_baja = p.getFechaIngreso();
         
-            Calendar c1 = Calendar.getInstance();
-            Calendar c2 = new GregorianCalendar();
-            
-            String dia = Integer.toString(c2.get(Calendar.DATE));
-            String mes = Integer.toString(c2.get(Calendar.MONTH));
-            String annio = Integer.toString(c2.get(Calendar.YEAR));
+        java.util.Date date = new java.util.Date();
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String fecha_alta = sdf.format(date);
         
-            String fecha_alta = annio+"/"+mes+"/"+dia;
+        //System.out.println(fecha_alta);
         
         
-        //Pacientes aux = new Pacientes(nombre,apellidos,fecha_alta,dni,fecha_baja);
+               
+        Pacientes per = new Pacientes(13,nombre,apellidos,fecha_alta,dni,fecha_baja);
+        session.save(per);
         
-        
+        String insert = "insert into Pacientes (select id, nombre, apellidos, fecha_alta, dni, fecha_ingreso from per)";
+               // + "("+per.getId()+",'"+per.getNombre()+"','"+per.getApellidos()+"','"+per.getFechaAlta()+
+                //"','"+per.getDni()+"','"+per.getFechaIngreso()+"')";
+        int filas = session.createQuery(insert).executeUpdate();
+        if(filas!=0){
+            System.out.println("Paciente añadido a la BD");
+        }
+        //tx.commit();
         
         
         
