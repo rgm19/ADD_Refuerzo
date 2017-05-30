@@ -15,6 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.print.attribute.standard.MediaPrintableArea.MM;
@@ -23,7 +24,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 
-public class Hibernate_Pacientes{
+public class Hibernate_Pacientes{    
+    
+    static Scanner teclado = new Scanner(System.in);    
+
     public static void main(String[]args) throws SQLException{
         
     Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
@@ -75,15 +79,15 @@ private static void menu(Session session, Transaction tx) throws SQLException {
                 break;
                 
             case 2:
-                
+                bajaPacientes(session, tx);
                 break;
                 
             case 3:
-               
+                listadoPacientesAnio(session,tx);
                 break;
                 
             case 4:
-                
+                modificarAlta(session,tx);
                 break;
                 
 
@@ -130,9 +134,47 @@ private static void menu(Session session, Transaction tx) throws SQLException {
         if(filas!=0){
             System.out.println("Paciente añadido a la BD");
         }
+
         //tx.commit();
         
         
         
+    }
+//------------------------------------------------------------------------------
+    private static void bajaPacientes(Session session, Transaction tx) {
+               
+        java.util.Date date = new java.util.Date();
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String fecha_baja = sdf.format(date);
+        
+        System.out.println("Escribe el id del paciente a cambiar la fecha");
+        int id = teclado.nextInt();
+        //teclado.nextLine();
+        
+        String update = "UPDATE Pacientes set fecha_ingreso ="+fecha_baja+" where id='"+id+"'";
+        int filasIn2=session.createQuery(update).executeUpdate();
+        System.out.println("Se han actualizado: " + filasIn2 + " filas");
+
+    }
+//------------------------------------------------------------------------------    
+
+    private static void listadoPacientesAnio(Session session, Transaction tx) {
+            
+        String listado ="year(fecha_alta), count(dni) as cuantos from Pacientes group by year(fecha_alta)";
+        Query q = session.createQuery(listado); //Respetar Mayusculas segun la clase del proyecto que corresponda con la tabla
+	List<Pacientes> lista = q.list();
+	Iterator <Pacientes> it = lista.iterator();
+
+    }
+//------------------------------------------------------------------------------
+    private static void modificarAlta(Session session, Transaction tx) {
+        java.util.Date date = new java.util.Date();
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String fecha_alta = sdf.format(date);
+        
+        
+        String update = "UPDATE Pacientes set fecha_ingreso ="+fecha_alta+" where id=2";
+        int filasIn2=session.createQuery(update).executeUpdate();
+        System.out.println("Se han actualizado: " + filasIn2 + " filas");
     }
 }
