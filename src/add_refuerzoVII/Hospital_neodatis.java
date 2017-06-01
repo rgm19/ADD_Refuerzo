@@ -11,6 +11,8 @@ import java.util.Scanner;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.neodatis.odb.*;
@@ -63,6 +65,7 @@ public class Hospital_neodatis {
  //-----------------------------------------------------------------------------
 private static void menu(){
         int op=0;
+        System.out.println();
         System.out.println("1- Modificar Paciente con OID2");
         System.out.println("2- Listado de Pacientes cuyo nombre empiece por A");
         System.out.println("3- Numero de personas registradas");
@@ -98,7 +101,7 @@ private static void menu(){
                 break;
                             
             case 5:
-                
+                pacienteAntiguo();
                 break;
              
             case 6:
@@ -196,4 +199,38 @@ private static void menu(){
        if(i==0)System.out.println("Ningun paciente fue dado de alta hace mas de 10 años");
     }
 //------------------------------------------------------------------------------    
+
+    private static void pacienteAntiguo() {          
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
+        Date fecha_antigua = null;
+        Date fecha=null;
+        Pacientes antiguo = new Pacientes();  
+        Objects<Pacientes> objects = odb.getObjects(Pacientes.class);
+        int vuelta=1;
+        
+        while(objects.hasNext()){
+            Pacientes paci = objects.next();
+            String aux = paci.getFechaBaja();
+            
+            
+
+        
+                try {
+
+                    fecha = sdf.parse(aux); 
+                    if(vuelta==1){ fecha_antigua=fecha; }
+                    
+                    if(fecha.before(fecha_antigua) == true){
+                           fecha_antigua=fecha;
+                           antiguo=paci;
+                    }
+
+                } catch (ParseException ex) { ex.printStackTrace(); }
+
+           vuelta++;            
+        }
+        
+        System.out.println("El paciente mas antiguo en la BD es; "+antiguo.getNombre()+" "+antiguo.getApellidos());
+        
+    }
 }
