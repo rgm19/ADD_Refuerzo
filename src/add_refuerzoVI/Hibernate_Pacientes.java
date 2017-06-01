@@ -121,7 +121,7 @@ private static void menu(Session session, Transaction tx) throws SQLException {
         java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
         String fecha_alta = sdf.format(date);
         
-        //System.out.println(fecha_alta);
+        
         
         
                
@@ -151,18 +151,20 @@ private static void menu(Session session, Transaction tx) throws SQLException {
         
         System.out.println("Escribe el id del paciente a cambiar la fecha");
         int id = teclado.nextInt();
-        //teclado.nextLine();
+        teclado.nextLine();
         
         String update = "UPDATE Pacientes set fecha_ingreso ="+fecha_baja+" where id='"+id+"'";
         int filasIn2=session.createQuery(update).executeUpdate();
         System.out.println("Se han actualizado: " + filasIn2 + " filas");
+        
+        tx.commit();
 
     }
 //------------------------------------------------------------------------------    
 
     private static void listadoPacientesAnio(Session session, Transaction tx) {
             
-        String listado ="year(fecha_alta), count(dni) as cuantos from Pacientes group by year(fecha_alta)";
+        String listado ="select year(fecha_alta), count(dni) as cuantos from Pacientes group by year(fecha_alta)";
         Query q = session.createQuery(listado); //Respetar Mayusculas segun la clase del proyecto que corresponda con la tabla
 	List<Pacientes> lista = q.list();
 	Iterator <Pacientes> it = lista.iterator();
