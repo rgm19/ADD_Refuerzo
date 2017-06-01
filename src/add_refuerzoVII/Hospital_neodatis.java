@@ -105,7 +105,7 @@ private static void menu(){
                 break;
              
             case 6:
-                
+                mediaAnios();
                 break;
                 
 
@@ -233,4 +233,13 @@ private static void menu(){
         System.out.println("El paciente mas antiguo en la BD es; "+antiguo.getNombre()+" "+antiguo.getApellidos());
         
     }
-}
+//------------------------------------------------------------------------------
+    private static void mediaAnios() {
+        Values valores8 = odb.getValues(new ValuesCriteriaQuery(Pacientes.class).avg("fechaBaja"));
+        ObjectValues media = valores8.nextValues();
+        BigInteger eMedia = (BigInteger) media.getByIndex(0);
+
+        System.out.println("Edad media de las Personas: " + eMedia);
+    }
+//------------------------------------------------------------------------------    
+}//Fin de la CLASE
