@@ -33,6 +33,7 @@ public class Hibernate_Pacientes{
     Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
     Session session = NewHibernateUtil.getSessionFactory().openSession();
     Transaction tx = null;
+    tx= session.beginTransaction();
     
        while(true){
            menu(session, tx);
@@ -124,10 +125,11 @@ private static void menu(Session session, Transaction tx) throws SQLException {
         
         
                
-        Pacientes per = new Pacientes(13,nombre,apellidos,fecha_alta,dni,fecha_baja);
+        Pacientes per = new Pacientes();
         session.save(per);
         
-        String insert = "insert into Pacientes (select id, nombre, apellidos, fecha_alta, dni, fecha_ingreso from per)";
+        String insert = "insert into Pacientes select 12, p.nombre, p.apellidos, p.fechaAlta, p.dni, p.fechaIngreso from Pacientes p"
+                + "where p.id=1";
                // + "("+per.getId()+",'"+per.getNombre()+"','"+per.getApellidos()+"','"+per.getFechaAlta()+
                 //"','"+per.getDni()+"','"+per.getFechaIngreso()+"')";
         int filas = session.createQuery(insert).executeUpdate();
@@ -135,7 +137,7 @@ private static void menu(Session session, Transaction tx) throws SQLException {
             System.out.println("Paciente añadido a la BD");
         }
 
-        //tx.commit();
+        tx.commit();
         
         
         
@@ -171,10 +173,12 @@ private static void menu(Session session, Transaction tx) throws SQLException {
         java.util.Date date = new java.util.Date();
         java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
         String fecha_alta = sdf.format(date);
+        System.out.println(fecha_alta);
         
         
-        String update = "UPDATE Pacientes set fecha_ingreso ="+fecha_alta+" where id=2";
+        String update = "UPDATE Pacientes set fecha_ingreso ='"+fecha_alta+"' where id=2";
         int filasIn2=session.createQuery(update).executeUpdate();
         System.out.println("Se han actualizado: " + filasIn2 + " filas");
+        tx.commit();
     }
 }
