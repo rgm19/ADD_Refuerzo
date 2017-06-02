@@ -87,6 +87,7 @@ private static void menu(){
         
         switch(op){
             case 1:
+                //mirar explicacion en el metodo para entenderlo bien si falla
                 modificarPaciente();
                 break;
                 
@@ -146,6 +147,8 @@ private static void menu(){
     }
 //------------------------------------------------------------------------------
     private static void modificarPaciente() {
+        //cuando no muestra nada es porque el OID sigue aumentando aunque borre los ultimos elementos añadidos
+        //para que este metodo funcione hay que borrar el archivo BBDD y ejecutar el programa
         Objects<Pacientes> objects = odb.getObjects(Pacientes.class);
         
         for(Pacientes p : objects){
@@ -188,6 +191,7 @@ private static void menu(){
     }
 //------------------------------------------------------------------------------
     private static void altaMas10Anios() {
+        //al ser fechaBaja de tipo string no se puede hacer de otra forma
        IQuery query = new CriteriaQuery(Pacientes.class, Where.and().add(Where.like("fechaAlta", "200%")));
        Objects<Pacientes> object = odb.getObjects(query);
        int i=0;
@@ -216,9 +220,11 @@ private static void menu(){
             String aux = paci.getFechaBaja();
                  
                 try {
+                    //transformo un string a un date
                     fecha = sdf.parse(aux);
+                    //igualo las fechas en la primera vuelta para evitar error de excepciones
                     if(vuelta==1){ fecha_antigua=fecha; antiguo=paci; }
-                    
+                    //si fecha es antes que fecha_antigua guardo el paciente y la fecha para la siguiente comprobacion 
                     if(fecha.before(fecha_antigua) == true){
                            fecha_antigua=fecha;
                            antiguo=paci;
@@ -234,7 +240,7 @@ private static void menu(){
     }
 //------------------------------------------------------------------------------
     private static void mediaAnios() {
-        
+        //este metodo necesita actualizare porque solo funciona si esta en orden
         Objects<Pacientes> objects = odb.getObjects(Pacientes.class);
         int vuelta=0;
         String [] anios=new String[objects.size()];
