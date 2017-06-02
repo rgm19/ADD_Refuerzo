@@ -36,6 +36,7 @@ public class Hospital_neodatis {
     public static void main(String[]args){
         odb= ODBFactory.open("BBDD");
         
+        
         pacientes.add(new Pacientes(1,"Juan","LaFuente","2017-05-05","45A","2017-04-15"));
         pacientes.add(new Pacientes(2,"Miguel","Pico","2017-02-05","12Z","2017-04-15"));
         pacientes.add(new Pacientes(3,"Maribel","Gutierrez","2016-02-05","58U","2017-04-15"));
@@ -44,12 +45,12 @@ public class Hospital_neodatis {
         pacientes.add(new Pacientes(6,"Julio","Abril","2015-02-05","52D","2017-04-15"));
         pacientes.add(new Pacientes(7,"Carmen","Peña","2016-02-05","49F","2017-04-15"));
         pacientes.add(new Pacientes(8,"Carmen","Peña","2015-02-05","49F","2017-04-15"));
-        pacientes.add(new Pacientes(9,"Angel","Rubi","2006-01-05","19E","2006-01-15"));
+        pacientes.add(new Pacientes(9,"Angel","Rubi","2017-01-05","19E","2017-01-15"));
         pacientes.add(new Pacientes(10,"Manuel","Lopez","2017-01-05","55M","2017-04-15"));
         pacientes.add(new Pacientes(11,"Manuel","Lopez","2017-03-05","55M","2017-04-15"));
-        pacientes.add(new Pacientes(12,"Teresa","Toro","2017-02-05","54T","2017-04-15"));
-        pacientes.add(new Pacientes(13,"Paco","Manzano","2014-02-05","88F","2017-04-15"));
-        pacientes.add(new Pacientes(14,"Paco","Manzano","2017-02-05","88F","2017-04-15"));
+        pacientes.add(new Pacientes(12,"Teresa","Toro","2017-02-05","54T","2016-04-15"));
+        pacientes.add(new Pacientes(13,"Paco","Manzano","2014-02-05","88F","2015-04-15"));
+        pacientes.add(new Pacientes(14,"Paco","Manzano","2006-02-05","88F","2006-04-15"));
         
         for(Pacientes p: pacientes){
             odb.store(p);
@@ -59,6 +60,7 @@ public class Hospital_neodatis {
            menu();
         }
         
+       
         
         
     }
@@ -112,6 +114,8 @@ private static void menu(){
                 
             case 0:
                 System.out.println("Cerrando Programa...");
+                borrarBD();
+                odb.close();                
                 System.exit(0);
                 break;
                 
@@ -148,17 +152,16 @@ private static void menu(){
             Pacientes paci = objects.next();
             OID oid = odb.getObjectId(p);
             
-            if(oid.getObjectId()== 4){
+            if(oid.getObjectId()== 2){
                 System.out.println("Escribe el nuevo apellido del paciente "+paci.getNombre());
                 String ap =teclado.nextLine();
                 paci.setApellidos(ap);
                 odb.store(paci);
                 odb.commit();
-                System.out.println("El paciente con OID "+oid.getObjectId()+", de nombre "+paci.getNombre()+", ahora tiene el apellido"+paci.getApellidos());
+                System.out.println("El paciente con OID "+oid.getObjectId()+", de nombre "+paci.getNombre()+", ahora tiene el apellido "+paci.getApellidos());
             }
         }
         
-        System.out.println("Apellido cambiado correctamente");
     }
 //------------------------------------------------------------------------------    
 
@@ -185,7 +188,7 @@ private static void menu(){
     }
 //------------------------------------------------------------------------------
     private static void altaMas10Anios() {
-         IQuery query = new CriteriaQuery(Pacientes.class, Where.and().add(Where.like("fechaAlta", "200%")));
+       IQuery query = new CriteriaQuery(Pacientes.class, Where.and().add(Where.like("fechaAlta", "200%")));
        Objects<Pacientes> object = odb.getObjects(query);
        int i=0;
        
@@ -201,7 +204,7 @@ private static void menu(){
 //------------------------------------------------------------------------------    
 
     private static void pacienteAntiguo() {          
-        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");
+        java.text.SimpleDateFormat sdf=new java.text.SimpleDateFormat("yyyy-MM-dd");  
         Date fecha_antigua = null;
         Date fecha=null;
         Pacientes antiguo = new Pacientes();  
@@ -211,14 +214,10 @@ private static void menu(){
         while(objects.hasNext()){
             Pacientes paci = objects.next();
             String aux = paci.getFechaBaja();
-            
-            
-
-        
+                 
                 try {
-
-                    fecha = sdf.parse(aux); 
-                    if(vuelta==1){ fecha_antigua=fecha; }
+                    fecha = sdf.parse(aux);
+                    if(vuelta==1){ fecha_antigua=fecha; antiguo=paci; }
                     
                     if(fecha.before(fecha_antigua) == true){
                            fecha_antigua=fecha;
@@ -235,11 +234,51 @@ private static void menu(){
     }
 //------------------------------------------------------------------------------
     private static void mediaAnios() {
+        
+        Objects<Pacientes> objects = odb.getObjects(Pacientes.class);
+        int vuelta=0;
+        String [] anios=new String[objects.size()];
+        
+        while(objects.hasNext()){
+            Pacientes paci = objects.next();
+            String [] cortada = paci.getFechaBaja().split("-");
+            anios[vuelta] = cortada[0];
+            vuelta++;
+        }
+        
+        String control=null;
+        int aux=0;
+        for(int i=0;i<anios.length;i++){
+            
+            if(!anios[i].equals(control)){
+                  control=anios[i];
+                  aux++;
+            }
+            
+        }
+        
+        System.out.println("La media de pacientes por año es de "+ vuelta/aux);
+        
+        
+        
+        /*
         Values valores8 = odb.getValues(new ValuesCriteriaQuery(Pacientes.class).avg("fechaBaja"));
         ObjectValues media = valores8.nextValues();
         BigInteger eMedia = (BigInteger) media.getByIndex(0);
 
-        System.out.println("Edad media de las Personas: " + eMedia);
+        //System.out.println("Media de Pacientes ingresados: " + eMedia);
+        */
     }
 //------------------------------------------------------------------------------    
+
+    private static void borrarBD() {
+        Objects<Pacientes> objects = odb.getObjects(Pacientes.class);
+
+        while(objects.hasNext()){
+            Pacientes paci = objects.next();
+            OID oid = odb.getObjectId(paci);
+            odb.deleteObjectWithId(oid);
+
+        }
+    }
 }//Fin de la CLASE
